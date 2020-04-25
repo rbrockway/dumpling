@@ -47,10 +47,10 @@ error()
 		MESSAGE="Directory $BACKUPBASE exists but is not a directory"
 		;;
 	20)
-		MESSAGE="Unable to create $XFSBASE"
+		MESSAGE="Unable to create $DUMPBASE"
 		;;
 	21)
-		MESSAGE="Directory $XFSBASE exists but is not a directory"
+		MESSAGE="Directory $DUMPBASE exists but is not a directory"
 		;;
 	22)
 		MESSAGE="Unable to create $FILESYSTEMBASE"
@@ -77,6 +77,12 @@ error()
 		MESSAGE="Unable to check if xfsdump utility is present on system $SYSTEMNAME"
 		;;
 	40)
+		MESSAGE="The dump utility is missing"
+		;;
+	41)
+		MESSAGE="Unable to check if dump utility is present on system $SYSTEMNAME"
+		;;
+	50)
 		MESSAGE="Unable to change directory to $FILESYSTEMBASE"
 		;;
 	60)
@@ -90,6 +96,12 @@ error()
 		;;
 	111)
 		MESSAGE="Unable to retire backups for $BASEI"
+		;;
+	113)
+		MESSAGE="Unknown dump strategy"
+		;;
+	115)
+		MESSAGE="Unknown file system type"
 		;;
 	170)
 		MESSAGE="Unable to remove empty directories"
@@ -105,6 +117,63 @@ error()
 	logger $MESSAGE
 
 	exit $1
+}
+
+extBackup()
+{
+	# We're not going anywhere without this
+	ssh root@$SYSTEMNAME "which dump" &> /dev/null
+	case $? in
+	0)
+		echo "Utility dump found"
+		;;
+	1)
+		error 40
+		;;
+	*)
+		error 41
+		;;
+	esac
+        echo "Taking dump of $FILESYSTEMNAME on $SYSTEMNAME at level $DUMPLEVEL"
+
+        case $FILESYSTEMNAME in
+        root)
+                FILESYSTEM="/"
+                ;;
+        *)
+                FILESYSTEM="/$FILESYSTEMNAME"
+                ;;
+        esac
+	
+        #ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfs.$DUMPLEVEL
+        ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}f - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL 2> /dev/null
+        BACKUPOUT=$?
+
+        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMTYPE" >> $RAWLOG
+
+	case $BACKUPOUT in
+	0)
+		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
+		echo $MESSAGE
+		logger $MESSAGE
+		;;
+	*)
+		error 60
+		;;
+	esac
+}
+
+
+filesystemBackup()
+{
+	case $FILESYSTEMTYPE in
+	xfs)
+		xfsBackup
+		;;
+	ext2|ext3|ext4)
+		extBackup
+		;;
+	esac
 }
 
 initialiseFilesystemBase()
@@ -218,7 +287,7 @@ initialiseRetiredCurrent()
 
 initialiseSystemBase()
 {
-	SYSTEMBASE=$XFSBASE/$SYSTEMNAME
+	SYSTEMBASE=$DUMPBASE/$SYSTEMNAME
 	if [ ! -e $SYSTEMBASE ]
 	then
 		mkdir $SYSTEMBASE
@@ -241,32 +310,32 @@ initialiseSystemBase()
 initialiseXFSBase()
 {
 
-	XFSBASE=$BACKUPBASE/xfsdump
-	if [ ! -e $XFSBASE ]
+	DUMPBASE=$BACKUPBASE/dumps
+	if [ ! -e $DUMPBASE ]
 	then
-		mkdir $XFSBASE
+		mkdir $DUMPBASE
 		case $? in
 		0)
-			echo "Creating $XFSBASE"
+			echo "Creating $DUMPBASE"
 			;;
 		*)
 			error 20
 			;;
 		esac
-	elif [ -d  $XFSBASE ]
+	elif [ -d  $DUMPBASE ]
 	then
-		echo "Directory $XFSBASE available"
+		echo "Directory $DUMPBASE available"
 	else
 		error 21
 	fi
 
-	XFSRAWLOG=$XFSBASE/rawlog
+	XFSRAWLOG=$DUMPBASE/rawlog
 }
 
 removeEmptyDirectories()
 {
 	echo "Removing empty directories"
-	find $XFSBASE -type d -mmin +60 -empty -delete
+	find $DUMPBASE -type d -mmin +60 -empty -delete
 	case $? in
 	0)
 		true
@@ -280,7 +349,7 @@ removeEmptyDirectories()
 retireOldBackups()
 {
 	echo "Checking for old backups to retire"
-	for I in $XFSBASE/*
+	for I in $DUMPBASE/*
 	do
 		BASEI=$(basename $I)
 		grep $BASEI $HOSTSFILE &> /dev/null
@@ -318,7 +387,7 @@ setDir()
 		echo "Backing up to $1"
 		;;
 	*)
-		error 40
+		error 50
 		;;
 	esac
 }
@@ -345,7 +414,7 @@ setDumpLevelAnnual()
 {
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *.xfs.0 2> /dev/null | wc -w)
+        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
         case $FULLDUMPCONT in
         0)
                 DUMPLEVEL=0
@@ -385,7 +454,7 @@ setDumpLevelMonthly()
 {
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *.xfs.0 2> /dev/null | wc -w)
+        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
         case $FULLDUMPCONT in
         0)
                 DUMPLEVEL=0
@@ -416,7 +485,7 @@ setDumpLevelWeekly()
 {
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *.xfs.0 2> /dev/null | wc -w)
+        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
         case $FULLDUMPCONT in
         0)
                 DUMPLEVEL=0
@@ -452,19 +521,16 @@ xfsBackup()
         root)
                 FILESYSTEM="/"
                 ;;
-	scylla)
-		FILESYSTEM="/var/lib/scylla"
-		;;
         *)
                 FILESYSTEM="/$FILESYSTEMNAME"
                 ;;
         esac
 	
         #ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfs.$DUMPLEVEL
-        ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfs.$DUMPLEVEL 2> /dev/null
+        ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfsdump.$DUMPLEVEL 2> /dev/null
         BACKUPOUT=$?
 
-        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT" >> $XFSRAWLOG
+        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMBACKUP" >> $RAWLOG
 
 	case $BACKUPOUT in
 	0)
@@ -504,8 +570,12 @@ case ${3-""} in
 "")
 	error 13
 	;;
-*)
+annual|monthly|weekly|hanoi)
+
 	DUMPSTRATEGY=$3
+	;;
+*)
+	error 113
 	;;
 esac
 
@@ -522,10 +592,15 @@ case ${5-""} in
 "")
 	error 15
 	;;
-*)
+ext2|ext3|ext4|xfs)
 	FILESYSTEMTYPE=$5
 	;;
+*)
+	error 115
+	;;
 esac
+
+processParameters
 
 initialiseMountBase
 initialiseXFSBase
@@ -536,6 +611,6 @@ initialiseRetiredCurrent
 
 setDir $FILESYSTEMBASE
 setDumpLevel
-xfsBackup
+filesystemBackup
 removeEmptyDirectories
 retireOldBackups
