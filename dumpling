@@ -303,7 +303,7 @@ initialiseXFSBase()
 		error 21
 	fi
 
-	XFSRAWLOG=$DUMPBASE/rawlog
+	RAWLOG=$DUMPBASE/rawlog
 }
 
 processBackupOut()
@@ -574,8 +574,6 @@ ext2|ext3|ext4|xfs)
 	error 115
 	;;
 esac
-
-processParameters
 
 initialiseMountBase
 initialiseXFSBase
