@@ -141,8 +141,6 @@ extBackup()
         ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}f - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL 2> /dev/null
         BACKUPOUT=$?
 
-	writeRawlog
-
 	processBackupOut
 }
 
@@ -312,6 +310,7 @@ processBackupOut()
 {
 	case $BACKUPOUT in
 	0)
+		writeRawlog
 		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
 		echo $MESSAGE
 		logger $MESSAGE
@@ -492,7 +491,7 @@ setDumpLevelWeekly()
 
 writeRawlog()
 {
-        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMBACKUP" >> $RAWLOG
+        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMTYPE" >> $RAWLOG
 }
 
 xfsBackup()
@@ -516,8 +515,6 @@ xfsBackup()
 	
         ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfsdump.$DUMPLEVEL 2> /dev/null
         BACKUPOUT=$?
-
-	writeRawlog
 
 	processBackupOut
 }
