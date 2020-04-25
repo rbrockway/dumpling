@@ -136,31 +136,14 @@ extBackup()
 	esac
         echo "Taking dump of $FILESYSTEMNAME on $SYSTEMNAME at level $DUMPLEVEL"
 
-        case $FILESYSTEMNAME in
-        root)
-                FILESYSTEM="/"
-                ;;
-        *)
-                FILESYSTEM="/$FILESYSTEMNAME"
-                ;;
-        esac
-	
-        #ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfs.$DUMPLEVEL
+	filesystemNameConvert
+
         ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}f - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL 2> /dev/null
         BACKUPOUT=$?
 
-        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMTYPE" >> $RAWLOG
+	writeRawlog
 
-	case $BACKUPOUT in
-	0)
-		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
-		echo $MESSAGE
-		logger $MESSAGE
-		;;
-	*)
-		error 60
-		;;
-	esac
+	processBackupOut
 }
 
 
@@ -174,6 +157,18 @@ filesystemBackup()
 		extBackup
 		;;
 	esac
+}
+
+filesystemNameConvert()
+{
+        case $FILESYSTEMNAME in
+        root)
+                FILESYSTEM="/"
+                ;;
+        *)
+                FILESYSTEM="/$FILESYSTEMNAME"
+                ;;
+        esac
 }
 
 initialiseFilesystemBase()
@@ -219,25 +214,6 @@ initialiseMountBase()
 	else
 		error 19
 	fi
-
-	#BACKUPBASE=$BACKUPBASE/xfsdump
-	#if [ ! -e $BACKUPBASE ]
-	#then
-	#	mkdir $BACKUPBASE
-	#	case $? in
-	#	0)
-	#		echo "Creating $BACKUPBASE"
-	#		;;
-	#	*)
-	#		error 22
-	#		;;
-	#	esac
-	#elif [ -d  $BACKUPBASE ]
-	#then
-	#	echo "Directory $BACKUPBASE available"
-	#else
-	#	error 16
-	#fi
 }
 
 initialiseRetiredBase()
@@ -330,6 +306,20 @@ initialiseXFSBase()
 	fi
 
 	XFSRAWLOG=$DUMPBASE/rawlog
+}
+
+processBackupOut()
+{
+	case $BACKUPOUT in
+	0)
+		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
+		echo $MESSAGE
+		logger $MESSAGE
+		;;
+	*)
+		error 60
+		;;
+	esac
 }
 
 removeEmptyDirectories()
@@ -500,6 +490,11 @@ setDumpLevelWeekly()
 	echo "Dump level set to be $DUMPLEVEL"
 }
 
+writeRawlog()
+{
+        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMBACKUP" >> $RAWLOG
+}
+
 xfsBackup()
 {
 	# We're not going anywhere without this
@@ -517,31 +512,14 @@ xfsBackup()
 	esac
         echo "Taking xfsdump of $FILESYSTEMNAME on $SYSTEMNAME at level $DUMPLEVEL"
 
-        case $FILESYSTEMNAME in
-        root)
-                FILESYSTEM="/"
-                ;;
-        *)
-                FILESYSTEM="/$FILESYSTEMNAME"
-                ;;
-        esac
+	filesystemNameConvert
 	
-        #ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfs.$DUMPLEVEL
         ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfsdump.$DUMPLEVEL 2> /dev/null
         BACKUPOUT=$?
 
-        echo "$SYSTEMNAME,$FILESYSTEMNAME,$DUMPLEVEL,$BACKUPOUT,$FILESYSTEMBACKUP" >> $RAWLOG
+	writeRawlog
 
-	case $BACKUPOUT in
-	0)
-		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
-		echo $MESSAGE
-		logger $MESSAGE
-		;;
-	*)
-		error 60
-		;;
-	esac
+	processBackupOut
 }
 
 #
