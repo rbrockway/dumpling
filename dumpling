@@ -163,6 +163,15 @@ filesystemNameConvert()
         root)
                 FILESYSTEM="/"
                 ;;
+	fs1)
+		FILESYSTEM="/srv/fs1"
+		;;
+	fs2)
+		FILESYSTEM="/srv/fs2"
+		;;
+	fs3)
+		FILESYSTEM="/srv/fs3"
+		;;
         *)
                 FILESYSTEM="/$FILESYSTEMNAME"
                 ;;
