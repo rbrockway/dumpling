@@ -138,7 +138,7 @@ extBackup()
 
 	filesystemNameConvert
 
-        ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}f - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL 2> /dev/null
+        ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}uf - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL 2> /dev/null
         BACKUPOUT=$?
 
 	processBackupOut
@@ -396,6 +396,9 @@ setDumpLevel()
 	annual)
 		setDumpLevelAnnual
 		;;
+	daily)
+		setDumpLevelDaily
+		;;
 	monthly)
 		setDumpLevelMonthly
 		;;
@@ -439,6 +442,14 @@ setDumpLevelAnnual()
                 fi
                 ;;
         esac
+
+	echo "Dump level set to be $DUMPLEVEL"
+}
+
+setDumpLevelDaily()
+{
+	# Every day is full dump day!
+	DUMPLEVEL=0
 
 	echo "Dump level set to be $DUMPLEVEL"
 }
@@ -595,4 +606,4 @@ setDir $FILESYSTEMBASE
 setDumpLevel
 filesystemBackup
 removeEmptyDirectories
-retireOldBackups
+#retireOldBackups
