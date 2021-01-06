@@ -16,6 +16,7 @@ set -u
 # $3: Dump strategy
 # $4: Backup directory
 # $5: Filesystem type [We may autodetect this later]
+# $6: Percentage capacity threshold to delete old backups (1-99)
 #
 
 #
@@ -221,6 +222,13 @@ initialiseMountBase()
 	else
 		error 19
 	fi
+
+	# Files older than this will always be removed if
+	# file removal is activated
+	MAXFILEAGE=90
+
+	# files younger than this will never be removed
+	MINFILEAGE=1
 }
 
 initialiseRetiredBase()
@@ -342,6 +350,25 @@ removeEmptyDirectories()
 		error 170
 		;;
 	esac
+}
+
+removeOldBackups()
+{
+	HOWFULL=$(df $BACKUPBASE | awk '/[0-9]%/{print $(NF-1)}' | sed s/%//)
+
+	# 00 is less then $TOOFULL so we need to fix this
+	if [ $HOWFULL -eq 00 ]
+	then
+		HOWFULL=99
+	fi
+
+	if [ $(($HOWFULL)) -ge $(($TOOFULL)) ]
+	then
+		for I in $(seq $MAXFILEAGE -1 $MINFILEAGE)
+		do
+			find $DUMPBASE -type f -mtime +$MAXFILEAGE -delete
+		done
+	fi
 }
 
 retireOldBackups()
@@ -565,7 +592,7 @@ case ${3-""} in
 "")
 	error 13
 	;;
-annual|monthly|weekly|hanoi)
+annual|daily|monthly|weekly|hanoi)
 
 	DUMPSTRATEGY=$3
 	;;
@@ -595,6 +622,15 @@ ext2|ext3|ext4|xfs)
 	;;
 esac
 
+case ${6-""} in
+"")
+	TOOFULL=90
+	;;
+*)
+	TOOFULL=$6
+	;;
+esac
+
 initialiseMountBase
 initialiseXFSBase
 initialiseSystemBase
@@ -602,8 +638,8 @@ initialiseFilesystemBase
 initialiseRetiredBase
 initialiseRetiredCurrent
 
+removeOldBackups
 setDir $FILESYSTEMBASE
 setDumpLevel
 filesystemBackup
 removeEmptyDirectories
-#retireOldBackups
