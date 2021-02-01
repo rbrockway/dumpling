@@ -366,7 +366,7 @@ removeOldBackups()
 	then
 		for I in $(seq $MAXFILEAGE -1 $MINFILEAGE)
 		do
-			find $DUMPBASE -type f -mtime +$MAXFILEAGE -delete
+			find $DUMPBASE -type f -mtime +$I -delete
 		done
 	fi
 }
@@ -635,8 +635,8 @@ initialiseMountBase
 initialiseXFSBase
 initialiseSystemBase
 initialiseFilesystemBase
-initialiseRetiredBase
-initialiseRetiredCurrent
+#initialiseRetiredBase
+#initialiseRetiredCurrent
 
 removeOldBackups
 setDir $FILESYSTEMBASE
