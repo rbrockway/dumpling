@@ -225,7 +225,7 @@ initialiseMountBase()
 
 	# Files older than this will always be removed if
 	# file removal is activated
-	MAXFILEAGE=90
+	MAXFILEAGE=400
 
 	# files younger than this will never be removed
 	MINFILEAGE=1
