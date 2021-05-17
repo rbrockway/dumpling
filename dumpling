@@ -117,7 +117,12 @@ error()
 	esac
 	echo $MESSAGE
 	logger $MESSAGE
-	echo $MESSAGE | mailx -s "Dumpling backup error $1" $MAILTO
+
+	# $MAILTO is optional
+	if [ -n $MAILTO ]
+	then
+		echo $MESSAGE | mailx -s "Dumpling backup error $1" $MAILTO
+	fi
 
 	exit $1
 }
@@ -333,7 +338,12 @@ processBackupOut()
 		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
 		echo $MESSAGE
 		logger $MESSAGE
-		echo $MESSAGE | mailx -s "Dumpling backup successful $1" $MAILTO
+
+		# $MAILTO is optional
+		if [ -n $MAILTO ]
+		then
+			echo $MESSAGE | mailx -s "Dumpling backup successful $1" $MAILTO
+		fi
 		;;
 	*)
 		error 60
