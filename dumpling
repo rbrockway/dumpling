@@ -630,7 +630,7 @@ case ${3-""} in
 "")
 	error 13
 	;;
-annual|daily|monthly|weekly|hanoi)
+annual|daily|monthly|smart|weekly|hanoi)
 
 	DUMPSTRATEGY=$3
 	;;
@@ -678,6 +678,7 @@ case ${7-""} in
 	;;
 esac
 
+echo $MAILTO
 initialiseMountBase
 initialiseXFSBase
 initialiseSystemBase
