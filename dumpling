@@ -439,14 +439,17 @@ setDumpLevel()
 	daily)
 		setDumpLevelDaily
 		;;
+	hanoi)
+		setDumpLevelHanoi
+		;;
 	monthly)
 		setDumpLevelMonthly
 		;;
+	smart)
+		setDumpLevelSmart
+		;;
 	weekly)
 		setDumpLevelWeekly
-		;;
-	hanoi)
-		setDumpLevelHanoi
 		;;
 	esac
 }
@@ -524,6 +527,28 @@ setDumpLevelMonthly()
                         # Level 9 is still available for any last minute dumps.
                         DUMPLEVEL=$(($DAYOFWEEK + 1))
                 fi
+                ;;
+        esac
+
+	echo "Dump level set to be $DUMPLEVEL"
+}
+
+setDumpLevelSmart()
+{
+	# It's not that smart yet.
+	# It will only do a level 0 if one is absent.
+	# A second run on a single day should be level 8
+
+        # Do we have a full dump?
+        # If not make one
+        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
+        case $FULLDUMPCONT in
+        0)
+                DUMPLEVEL=0
+                ;;
+        *)
+                # Results in a number between 1 and 7 inclusive
+                DUMPLEVEL=$(date +%u)
                 ;;
         esac
 
