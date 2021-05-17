@@ -17,6 +17,7 @@ set -u
 # $4: Backup directory
 # $5: Filesystem type [We may autodetect this later]
 # $6: Percentage capacity threshold to delete old backups (1-99)
+# $7: Email address to report to (optional)
 #
 
 #
@@ -116,6 +117,7 @@ error()
 	esac
 	echo $MESSAGE
 	logger $MESSAGE
+	echo $MESSAGE | mailx -s "Dumpling backup error $1" $MAILTO
 
 	exit $1
 }
@@ -331,6 +333,7 @@ processBackupOut()
 		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
 		echo $MESSAGE
 		logger $MESSAGE
+		echo $MESSAGE | mailx -s "Dumpling backup successful $1" $MAILTO
 		;;
 	*)
 		error 60
@@ -628,6 +631,15 @@ case ${6-""} in
 	;;
 *)
 	TOOFULL=$6
+	;;
+esac
+
+case ${7-""} in
+"")
+	true
+	;;
+*)
+	MAILTO=$7
 	;;
 esac
 
