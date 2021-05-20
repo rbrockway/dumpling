@@ -675,10 +675,10 @@ case ${7-""} in
 	;;
 *)
 	MAILTO=$7
+	echo $MAILTO
 	;;
 esac
 
-echo $MAILTO
 initialiseMountBase
 initialiseXFSBase
 initialiseSystemBase
