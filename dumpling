@@ -342,7 +342,7 @@ processBackupOut()
 		# $MAILTO is optional
 		if [ -n $MAILTO ]
 		then
-			echo $MESSAGE | mailx -s "Dumpling backup successful $1" $MAILTO
+			echo $MESSAGE | mailx -s "Successful Dumpling Backup: $SYSTEMNAME/$FILESYSTEM/$DUMPLEVEL" $MAILTO
 		fi
 		;;
 	*)
