@@ -215,6 +215,9 @@ initialiseMountBase()
 	YEAR=$(date +%y)
 	MONTH=$(date +%m)
 	DAY=$(date +%d)
+	DAYOFYEAR=$(date +%j)
+	DAYOFMONTH=$(date +%e)
+	DAYOFWEEK=$(date +%u)
 
 	UNIQUEID=$TIMESTAMP.$$
 
@@ -464,10 +467,6 @@ setDumpLevelAnnual()
                 DUMPLEVEL=0
                 ;;
         *)
-                DAYOFYEAR=$(date +%j)
-                DAYOFMONTH=$(date +%e)
-                DAYOFWEEK=$(date +%u)
-
                 DAYLEVEL0=$(( $(hostname | tr . 0 | tr a-z 0-9 ) % 365 ))
                 DAYLEVEL1=$(( $(hostname | tr . 0 | tr a-z 0-9 ) % 28 ))
 
@@ -547,8 +546,10 @@ setDumpLevelSmart()
                 DUMPLEVEL=0
                 ;;
         *)
-                # Results in a number between 1 and 7 inclusive
-                DUMPLEVEL=$(date +%u)
+                # Results in a number between 2 and 8 inclusive
+                # which fits nicely in to the dump levels.
+                # Level 9 is still available for any last minute dumps.
+                DUMPLEVEL=$(($DAYOFWEEK + 1))
                 ;;
         esac
 
