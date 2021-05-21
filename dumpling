@@ -121,7 +121,7 @@ error()
 	# $MAILTO is optional
 	if [ -n $MAILTO ]
 	then
-		echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME,$FILESYSTEM,$DUMPLEVEL" $MAILTO
+		echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
 	fi
 
 	exit $1
@@ -342,7 +342,7 @@ processBackupOut()
 		# $MAILTO is optional
 		if [ -n $MAILTO ]
 		then
-			echo $MESSAGE | mailx -s "Successful Dumpling Backup: $SYSTEMNAME,$FILESYSTEM,$DUMPLEVEL" $MAILTO
+			echo $MESSAGE | mailx -s "Backup Successful: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
 		fi
 		;;
 	*)
