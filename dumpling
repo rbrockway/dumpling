@@ -28,91 +28,91 @@ error()
 {
 	case $1 in
 	11)
-		MESSAGE="Please specify system to be backed up"
+		MESSAGE="Please specify system to be backed up."
 		;;
 	12)
-		MESSAGE="Please specify filesystem to be backed up"
+		MESSAGE="Please specify filesystem to be backed up."
 		;;
 	13)
-		MESSAGE="Please specify backup strategy"
+		MESSAGE="Please specify backup strategy."
 		;;
 	14)
-		MESSAGE="Please specify mount base"
+		MESSAGE="Please specify mount base."
 		;;
 	15)
-		MESSAGE="Please specify file system"
+		MESSAGE="Please specify file system."
 		;;
 	18)
-		MESSAGE="Please mount $BACKUPBASE"
+		MESSAGE="Please mount $BACKUPBASE."
 		;;
 	19)
-		MESSAGE="Directory $BACKUPBASE exists but is not a directory"
+		MESSAGE="Directory $BACKUPBASE exists but is not a directory."
 		;;
 	20)
-		MESSAGE="Unable to create $DUMPBASE"
+		MESSAGE="Unable to create $DUMPBASE."
 		;;
 	21)
-		MESSAGE="Directory $DUMPBASE exists but is not a directory"
+		MESSAGE="Directory $DUMPBASE exists but is not a directory."
 		;;
 	22)
-		MESSAGE="Unable to create $FILESYSTEMBASE"
+		MESSAGE="Unable to create $FILESYSTEMBASE."
 		;;
 	23)
-		MESSAGE="Directory $FILESYSTEMBASE exists but is not a directory"
+		MESSAGE="Directory $FILESYSTEMBASE exists but is not a directory."
 		;;
 	24)
-		MESSAGE="Unable to create $RETIREDBASE"
+		MESSAGE="Unable to create $RETIREDBASE."
 		;;
 	25)
-		MESSAGE="Directory $RETIREDBASE exists but is not a directory"
+		MESSAGE="Directory $RETIREDBASE exists but is not a directory."
 		;;
 	26)
-		MESSAGE="Unable to create $RETIREDCURRENT"
+		MESSAGE="Unable to create $RETIREDCURRENT."
 		;;
 	27)
-		MESSAGE="Directory $RETIREDCURRENT exists but is not a directory"
+		MESSAGE="Directory $RETIREDCURRENT exists but is not a directory."
 		;;
 	30)
-		MESSAGE="The xfsdump utility is missing"
+		MESSAGE="The xfsdump utility is missing."
 		;;
 	31)
-		MESSAGE="Unable to check if xfsdump utility is present on system $SYSTEMNAME"
+		MESSAGE="Unable to check if xfsdump utility is present on system $SYSTEMNAME."
 		;;
 	40)
-		MESSAGE="The dump utility is missing"
+		MESSAGE="The dump utility is missing."
 		;;
 	41)
-		MESSAGE="Unable to check if dump utility is present on system $SYSTEMNAME"
+		MESSAGE="Unable to check if dump utility is present on system $SYSTEMNAME."
 		;;
 	50)
-		MESSAGE="Unable to change directory to $FILESYSTEMBASE"
+		MESSAGE="Unable to change directory to $FILESYSTEMBASE."
 		;;
 	60)
-		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL failed"
+		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL failed."
 		;;
 	90)
-		MESSAGE="Dump strategy hanoi not yet implemented"
+		MESSAGE="Dump strategy hanoi not yet implemented."
 		;;
 	110)
-		MESSAGE="Search of $HOSTSFILE failed"
+		MESSAGE="Search of $HOSTSFILE failed."
 		;;
 	111)
-		MESSAGE="Unable to retire backups for $BASEI"
+		MESSAGE="Unable to retire backups for $BASEI."
 		;;
 	113)
-		MESSAGE="Unknown dump strategy"
+		MESSAGE="Unknown dump strategy."
 		;;
 	115)
-		MESSAGE="Unknown file system type"
+		MESSAGE="Unknown file system type."
 		;;
 	170)
-		MESSAGE="Unable to remove empty directories"
+		MESSAGE="Unable to remove empty directories."
 		;;
 	180)
-		MESSAGE="Unable to compress .json files"
+		MESSAGE="Unable to compress .json files."
 		;;
 	*)
-		MESSAGE="Unknown error"
+		MESSAGE="Unknown error."
 		;;
 	esac
 	echo $MESSAGE
@@ -335,7 +335,7 @@ processBackupOut()
 	case $BACKUPOUT in
 	0)
 		writeRawlog
-		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful"
+		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful."
 		echo $MESSAGE
 		logger $MESSAGE
 
