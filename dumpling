@@ -121,7 +121,7 @@ error()
 	# $MAILTO is optional
 	if [ -n $MAILTO ]
 	then
-		echo $MESSAGE | mailx -s "Dumpling backup error $1" $MAILTO
+		echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME/$FILESYSTEM/$DUMPLEVEL" $MAILTO
 	fi
 
 	exit $1
