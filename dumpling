@@ -511,9 +511,6 @@ setDumpLevelMonthly()
                 DUMPLEVEL=0
                 ;;
         *)
-                DAYOFMONTH=$(date +%e)
-                DAYOFWEEK=$(date +%u)
-
                 DAYLEVEL0=$(( $(hostname | tr . 0 | tr a-z 0-9 ) % 365 ))
                 DAYLEVEL1=$(( $(hostname | tr . 0 | tr a-z 0-9 ) % 28 ))
 
@@ -566,7 +563,6 @@ setDumpLevelWeekly()
                 DUMPLEVEL=0
                 ;;
         *)
-                DAYOFWEEK=$(date +%u)
                 # Results in a number between 0 and 6 inclusive
                 DUMPLEVEL=$(($DAYOFWEEK - 1))
                 ;;
