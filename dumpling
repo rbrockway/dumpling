@@ -121,7 +121,14 @@ error()
 	# $MAILTO is optional
 	if [ -n $MAILTO ]
 	then
-		echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
+		case ${FILESYSTEM-""} in
+		"")
+			echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME" $MAILTO
+			;;
+		*)
+			echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
+			;;
+		esac
 	fi
 
 	exit $1
@@ -628,7 +635,6 @@ case ${3-""} in
 	error 13
 	;;
 annual|daily|monthly|smart|weekly|hanoi)
-
 	DUMPSTRATEGY=$3
 	;;
 *)
