@@ -46,7 +46,7 @@ error()
 		MESSAGE="Please mount $BACKUPBASE."
 		;;
 	19)
-		MESSAGE="Directory $BACKUPBASE exists but is not a directory."
+		MESSAGE="Directory $BACKUPBASE not available."
 		;;
 	20)
 		MESSAGE="Unable to create $DUMPBASE."
