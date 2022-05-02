@@ -207,7 +207,7 @@ initialiseFilesystemBase()
 			error 22
 			;;
 		esac
-	elif [ -d  $FILESYSTEMBASE ]
+	elif [ -d $FILESYSTEMBASE ]
 	then
 		echo "Directory $FILESYSTEMBASE available"
 	else
@@ -233,7 +233,7 @@ initialiseMountBase()
 	if [ ! -e $BACKUPBASE ]
 	then
 		error 18
-	elif [ -d  $BACKUPBASE ]
+	elif [ -f $BACKUPBASE/config ]
 	then
 		echo "Directory $BACKUPBASE available"
 	else
