@@ -106,6 +106,12 @@ error()
 	115)
 		MESSAGE="Unknown file system type."
 		;;
+	150)
+		MESSAGE="Unable to remove partial backups"
+		;;
+	160)
+		MESSAGE="Unable to remove old backups"
+		;;
 	170)
 		MESSAGE="Unable to remove empty directories."
 		;;
@@ -394,8 +400,30 @@ removeOldBackups()
 		for I in $(seq $MAXFILEAGE -1 $MINFILEAGE)
 		do
 			find $DUMPBASE -type f -mtime +$I -delete
+			case $? in
+			0)
+				true
+				;;
+			*)
+				error 160
+				;;
+			esac
 		done
 	fi
+}
+
+removePartialBackups()
+{
+	# Remove partial backups last modified more than 5 minutes ago
+	find $DUMPBASE -name '*.part' -type f -mmin +5 -delete
+	case $? in
+	0)
+		true
+		;;
+	*)
+		error 150
+		;;
+	esac
 }
 
 retireOldBackups()
@@ -695,6 +723,7 @@ initialiseFilesystemBase
 #initialiseRetiredBase
 #initialiseRetiredCurrent
 
+removePartialBackups
 removeOldBackups
 setDir $FILESYSTEMBASE
 setDumpLevel
