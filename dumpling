@@ -10,6 +10,7 @@ set -u
 #
 # Robert Brockway
 # March 2, 2020
+# November 8, 2022
 #
 # $1: Host
 # $2: Filesystem mount point
@@ -115,8 +116,8 @@ error()
 		MESSAGE="Unknown error."
 		;;
 	esac
-	echo $MESSAGE
-	logger $MESSAGE
+	echo "Error $1: $MESSAGE"
+	logger "Error $1: $MESSAGE"
 
 	# $MAILTO is optional
 	if [ -n $MAILTO ]
@@ -153,7 +154,9 @@ extBackup()
 
 	filesystemNameConvert
 
-        ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}uf - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL 2> /dev/null
+	BACKUPFILENAME=$SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.dump.$DUMPLEVEL
+
+        ssh root@$SYSTEMNAME "dump -${DUMPLEVEL}uf - $FILESYSTEM" > $BACKUPFILENAME.part 2> /dev/null
         BACKUPOUT=$?
 
 	processBackupOut
@@ -344,6 +347,7 @@ processBackupOut()
 {
 	case $BACKUPOUT in
 	0)
+		mv $BACKUPFILENAME.part $BACKUPFILENAME
 		writeRawlog
 		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful."
 		echo $MESSAGE
@@ -601,8 +605,10 @@ xfsBackup()
         echo "Taking xfsdump of $FILESYSTEMNAME on $SYSTEMNAME at level $DUMPLEVEL"
 
 	filesystemNameConvert
-	
-        ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfsdump.$DUMPLEVEL 2> /dev/null
+
+	BACKUPFILENAME=$SYSTEMNAME.$FILESYSTEMNAME.$TIMESTAMP.xfsdump.$DUMPLEVEL
+
+        ssh root@$SYSTEMNAME "xfsdump -M $FILESYSTEMNAME -L $SYSTEMNAME -l $DUMPLEVEL - $FILESYSTEM" > $BACKUPFILENAME.part 2> /dev/null
         BACKUPOUT=$?
 
 	processBackupOut
