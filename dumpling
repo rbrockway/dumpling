@@ -494,8 +494,8 @@ setDumpLevelAnnual()
 {
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
-        case $FULLDUMPCONT in
+        FULLDUMPCOUNT=$(ls *dump.0 2> /dev/null | wc -w)
+        case $FULLDUMPCOUNT in
         0)
                 DUMPLEVEL=0
                 ;;
@@ -538,8 +538,8 @@ setDumpLevelMonthly()
 {
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
-        case $FULLDUMPCONT in
+        FULLDUMPCOUNT=$(ls *dump.0 2> /dev/null | wc -w)
+        case $FULLDUMPCOUNT in
         0)
                 DUMPLEVEL=0
                 ;;
@@ -570,8 +570,8 @@ setDumpLevelSmart()
 
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
-        case $FULLDUMPCONT in
+        FULLDUMPCOUNT=$(ls *dump.0 2> /dev/null | wc -w)
+        case $FULLDUMPCOUNT in
         0)
                 DUMPLEVEL=0
                 ;;
@@ -590,8 +590,8 @@ setDumpLevelWeekly()
 {
         # Do we have a full dump?
         # If not make one
-        FULLDUMPCONT=$(ls *dump.0 2> /dev/null | wc -w)
-        case $FULLDUMPCONT in
+        FULLDUMPCOUNT=$(ls *dump.0 2> /dev/null | wc -w)
+        case $FULLDUMPCOUNT in
         0)
                 DUMPLEVEL=0
                 ;;
