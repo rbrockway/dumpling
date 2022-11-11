@@ -11,6 +11,7 @@ set -u
 # Robert Brockway
 # March 2, 2020
 # November 8, 2022
+# November 11, 2022
 #
 # $1: Host
 # $2: Filesystem mount point
@@ -24,6 +25,18 @@ set -u
 #
 # Functions
 #
+
+copyRawlog()
+{
+	RAWLOGBACKUP=~/dumpling/rawlogs
+
+	if [ -d $RAWLOGBACKUP/$TYPE/$NUMBER ]
+	then
+		true
+	else
+		mkdir -p $RAWLOGBACKUP/$TYPE/$NUMBER
+	fi
+}
 
 error()
 {
@@ -218,8 +231,10 @@ initialiseFilesystemBase()
 	fi
 }
 
-initialiseMountBase()
+initialiseGeneral()
 {
+	CONFIGFILE=$BACKUPBASE/config
+
 	# Used all over the place
 	TIMESTAMP=$(date +%s)
 	YEAR=$(date +%y)
@@ -236,9 +251,11 @@ initialiseMountBase()
 	if [ ! -e $BACKUPBASE ]
 	then
 		error 18
-	elif [ -f $BACKUPBASE/config ]
+	elif [ -f $CONFIGFILE ]
 	then
 		echo "Directory $BACKUPBASE available"
+		TYPE=$(grep TYPE $CONFIGFILE | cut -d = -f 2)
+		NUMBER=$(grep NUMBER $CONFIGFILE | cut -d = -f 2)
 	else
 		error 19
 	fi
@@ -349,6 +366,7 @@ processBackupOut()
 	0)
 		mv $BACKUPFILENAME.part $BACKUPFILENAME
 		writeRawlog
+		copyRawlog
 		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful."
 		echo $MESSAGE
 		logger $MESSAGE
@@ -710,7 +728,7 @@ case ${7-""} in
 	;;
 esac
 
-initialiseMountBase
+initialiseGeneral
 initialiseXFSBase
 initialiseSystemBase
 initialiseFilesystemBase
