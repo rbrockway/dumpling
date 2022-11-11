@@ -36,6 +36,8 @@ copyRawlog()
 	else
 		mkdir -p $RAWLOGBACKUP/$TYPE/$NUMBER
 	fi
+
+
 }
 
 error()
@@ -266,51 +268,6 @@ initialiseGeneral()
 
 	# files younger than this will never be removed
 	MINFILEAGE=1
-}
-
-initialiseRetiredBase()
-{
-
-	RETIREDBASE=$BACKUPBASE/retired
-	if [ ! -e $RETIREDBASE ]
-	then
-		mkdir $RETIREDBASE
-		case $? in
-		0)
-			echo "Creating $RETIREDBASE"
-			;;
-		*)
-			error 24
-			;;
-		esac
-	elif [ -d  $RETIREDBASE ]
-	then
-		echo "Directory $RETIREDBASE available"
-	else
-		error 25
-	fi
-}
-
-initialiseRetiredCurrent()
-{
-	RETIREDCURRENT=$BACKUPBASE/retired/$TIMESTAMP
-	if [ ! -e $RETIREDCURRENT ]
-	then
-		mkdir -p $RETIREDCURRENT
-		case $? in
-		0)
-			echo "Creating $RETIREDCURRENT"
-			;;
-		*)
-			error 26
-			;;
-		esac
-	elif [ -d  $RETIREDCURRENT ]
-	then
-		echo "Directory $RETIREDCURRENT available"
-	else
-		error 27
-	fi
 }
 
 initialiseSystemBase()
@@ -732,8 +689,6 @@ initialiseGeneral
 initialiseXFSBase
 initialiseSystemBase
 initialiseFilesystemBase
-#initialiseRetiredBase
-#initialiseRetiredCurrent
 
 removePartialBackups
 removeOldBackups
