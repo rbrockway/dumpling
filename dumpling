@@ -28,16 +28,33 @@ set -u
 
 copyRawlog()
 {
-	RAWLOGBACKUP=~/dumpling/rawlogs
+	RAWLOGBASE=~/rawlogs
+	RAWLOGDIR=$RAWLOGBASE/$TYPE/$NUMBER
 
-	if [ -d $RAWLOGBACKUP/$TYPE/$NUMBER ]
+	if [ -d $RAWLOGDIR ]
 	then
 		true
 	else
-		mkdir -p $RAWLOGBACKUP/$TYPE/$NUMBER
+		mkdir -p $RAWLOGDIR
+		case $? in
+		0)
+			true
+			;;
+		*)
+			error 70
+			;;
+		esac
 	fi
 
-
+	cp $RAWLOG $RAWLOGDIR/rawlog
+	case $? in
+	0)
+		true
+		;;
+	*)
+		error 75
+		;;
+	esac
 }
 
 error()
