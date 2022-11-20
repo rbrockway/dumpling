@@ -341,7 +341,7 @@ processBackupOut()
 		mv $BACKUPFILENAME.part $BACKUPFILENAME
 		writeRawlog
 		copyRawlog
-		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL successful."
+		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL to $TYPE$NUMBER successful."
 		echo $MESSAGE
 		logger $MESSAGE
 
