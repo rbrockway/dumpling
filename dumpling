@@ -121,7 +121,7 @@ error()
 		MESSAGE="Unable to change directory to $FILESYSTEMBASE."
 		;;
 	60)
-		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL failed."
+		MESSAGE="Backup of $FILESYSTEM on $SYSTEMNAME at level $DUMPLEVEL to $TYPE$NUMBER failed."
 		;;
 	90)
 		MESSAGE="Dump strategy hanoi not yet implemented."
@@ -162,10 +162,10 @@ error()
 	then
 		case ${FILESYSTEM-""} in
 		"")
-			echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME" $MAILTO
+			echo $MESSAGE | mailx -s "BACKUP TO $TYPE$NUMBER FAILED: $SYSTEMNAME" $MAILTO
 			;;
 		*)
-			echo $MESSAGE | mailx -s "BACKUP FAILED: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
+			echo $MESSAGE | mailx -s "BACKUP TO $TYPE$NUMBER FAILED: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
 			;;
 		esac
 	fi
@@ -348,7 +348,7 @@ processBackupOut()
 		# $MAILTO is optional
 		if [ -n $MAILTO ]
 		then
-			echo $MESSAGE | mailx -s "Backup Successful: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
+			echo $MESSAGE | mailx -s "Backup to $TYPE$NUMBER Successful: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
 		fi
 		;;
 	*)
