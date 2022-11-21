@@ -162,10 +162,10 @@ error()
 	then
 		case ${FILESYSTEM-""} in
 		"")
-			echo $MESSAGE | mailx -s "FAILED BACKUP of $SYSTEMNAME to $TYPE$NUMBER" $MAILTO
+			echo $MESSAGE | mailx -s "BACKUP FAILED: $TYPE$NUMBER: $SYSTEMNAME" $MAILTO
 			;;
 		*)
-			echo $MESSAGE | mailx -s "FAILED BACKUP of $SYSTEMNAME:$FILESYSTEM:$DUMPLEVEL to $TYPE$NUMBER" $MAILTO
+			echo $MESSAGE | mailx -s "BACKUP FAILED: $TYPE$NUMBER: $SYSTEMNAME:$FILESYSTEM:$DUMPLEVEL" $MAILTO
 			;;
 		esac
 	fi
