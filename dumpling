@@ -348,7 +348,7 @@ processBackupOut()
 		# $MAILTO is optional
 		if [ -n $MAILTO ]
 		then
-			echo $MESSAGE | mailx -s "Backup to $TYPE$NUMBER Successful: $SYSTEMNAME:$FILESYSTEM Level: $DUMPLEVEL" $MAILTO
+			echo $MESSAGE | mailx -s "Backup Successful: $TYPE$NUMBER: $SYSTEMNAME:$FILESYSTEM:$DUMPLEVEL" $MAILTO
 		fi
 		;;
 	*)
