@@ -524,14 +524,6 @@ setDumpLevelDaily()
 	echo "Dump level set to be $DUMPLEVEL"
 }
 
-setDumpLevelFull()
-{
-	# Every day is full dump day!
-	DUMPLEVEL=0
-
-	echo "Dump level set to be $DUMPLEVEL"
-}
-
 setDumpLevelHanoi()
 {
 	error 90
@@ -603,6 +595,14 @@ setDumpLevelWeekly()
                 DUMPLEVEL=$(($DAYOFWEEK - 1))
                 ;;
         esac
+
+	echo "Dump level set to be $DUMPLEVEL"
+}
+
+setDumpLevelZero()
+{
+	# Every day is full dump day!
+	DUMPLEVEL=0
 
 	echo "Dump level set to be $DUMPLEVEL"
 }
