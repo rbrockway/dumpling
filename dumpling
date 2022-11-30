@@ -467,6 +467,9 @@ setDumpLevel()
 	daily)
 		setDumpLevelDaily
 		;;
+	full)
+		setDumpLevelZero
+		;;
 	hanoi)
 		setDumpLevelHanoi
 		;;
@@ -514,6 +517,14 @@ setDumpLevelAnnual()
 }
 
 setDumpLevelDaily()
+{
+	# Every day is full dump day!
+	DUMPLEVEL=0
+
+	echo "Dump level set to be $DUMPLEVEL"
+}
+
+setDumpLevelFull()
 {
 	# Every day is full dump day!
 	DUMPLEVEL=0
@@ -654,7 +665,7 @@ case ${3-""} in
 "")
 	error 13
 	;;
-annual|daily|monthly|smart|weekly|hanoi)
+annual|daily|full|monthly|smart|weekly|hanoi)
 	DUMPSTRATEGY=$3
 	;;
 *)
