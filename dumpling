@@ -129,9 +129,6 @@ error()
 	110)
 		MESSAGE="Search of $HOSTSFILE failed."
 		;;
-	111)
-		MESSAGE="Unable to retire backups for $BASEI."
-		;;
 	113)
 		MESSAGE="Unknown dump strategy."
 		;;
@@ -410,39 +407,6 @@ removePartialBackups()
 		error 150
 		;;
 	esac
-}
-
-retireOldBackups()
-{
-	echo "Checking for old backups to retire"
-	for I in $DUMPBASE/*
-	do
-		BASEI=$(basename $I)
-		grep $BASEI $HOSTSFILE &> /dev/null
-		case $? in
-		0)
-			# Silently accept matches
-			true
-			;;
-		1)
-			echo "Retiring backups for $BASEI"
-			mv $I $RETIREDCURRENT
-			case $?
-			in
-			0)
-				echo "Backups for $BASEI successfully retired"
-				;;
-			*)
-				error 111
-				;;
-			esac
-			;;
-		*)
-			error 110
-			;;
-		esac
-			
-	done
 }
 
 setDir()
