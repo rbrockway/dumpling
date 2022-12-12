@@ -21,6 +21,12 @@ set -u
 # $6: Percentage capacity threshold to delete old backups (1-99)
 # $7: Email address to report to (optional)
 #
+# To do:
+#
+# Change ~/rawlogs to ~/reports and genderalise variable names so
+# additional reporting can be included in the same directory tree.
+# 
+# As well as rawlog have a report on the current backups on each drive generated#
 
 #
 # Functions
