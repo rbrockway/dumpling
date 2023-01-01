@@ -34,14 +34,14 @@ set -u
 
 copyRawlog()
 {
-	RAWLOGBASE=~/rawlogs
-	RAWLOGDIR=$RAWLOGBASE/$TYPE/$NUMBER
+	REPORTBASE=~/reports
+	REPORTDIR=$REPORTBASE/$TYPE/$NUMBER
 
-	if [ -d $RAWLOGDIR ]
+	if [ -d $REPORTDIR ]
 	then
 		true
 	else
-		mkdir -p $RAWLOGDIR
+		mkdir -p $REPORTDIR
 		case $? in
 		0)
 			true
@@ -52,7 +52,7 @@ copyRawlog()
 		esac
 	fi
 
-	cp $RAWLOG $RAWLOGDIR/rawlog
+	cp $RAWLOG $REPORTDIR/rawlog
 	case $? in
 	0)
 		true
@@ -140,6 +140,12 @@ error()
 		;;
 	115)
 		MESSAGE="Unknown file system type."
+		;;
+	120)
+		MESSAGE="Unable to read TYPE in config file"
+		;;
+	125)
+		MESSAGE="Unable to read NUMBER in config file"
 		;;
 	150)
 		MESSAGE="Unable to remove partial backups"
@@ -231,6 +237,34 @@ filesystemNameConvert()
         esac
 }
 
+getType()
+{
+	TYPE=$(grep TYPE $CONFIGFILE | cut -d = -f 2 2> /dev/null)
+	case $? in
+	0)
+		true
+		;;
+	*)
+		error 120
+		;;
+	esac
+}
+
+getNumber()
+{
+	NUMBER=$(grep NUMBER $CONFIGFILE | cut -d = -f 2 2> /dev/null)
+	case $? in
+	0)
+		true
+		;;
+	*)
+		error 125
+		;;
+	esac
+
+}
+
+
 initialiseFilesystemBase()
 {
 	FILESYSTEMBASE=$SYSTEMBASE/$FILESYSTEMNAME
@@ -276,8 +310,8 @@ initialiseGeneral()
 	elif [ -f $CONFIGFILE ]
 	then
 		echo "Directory $BACKUPBASE available"
-		TYPE=$(grep TYPE $CONFIGFILE | cut -d = -f 2)
-		NUMBER=$(grep NUMBER $CONFIGFILE | cut -d = -f 2)
+		getType
+		getNumber
 	else
 		error 19
 	fi
